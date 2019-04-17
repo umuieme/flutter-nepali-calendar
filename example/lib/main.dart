@@ -3,6 +3,7 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 import 'package:nepali_calendar/nepali_calendar.dart';
+import 'package:nepali_calendar_example/nepali_date_converter.dart';
 
 void main() => runApp(MyApp());
 
@@ -12,34 +13,16 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  String _platformVersion = 'Unknown';
+  String nepaliDate = "";
+  String convertedEnglish = "";
+  String englishDate = "";
+  String convertedNepali = "";
 
   @override
   void initState() {
     super.initState();
-    initPlatformState();
   }
-
-  // Platform messages are asynchronous, so we initialize in an async method.
-  Future<void> initPlatformState() async {
-    String platformVersion;
-    // Platform messages may fail, so we use a try/catch PlatformException.
-    try {
-      platformVersion = await NepaliCalendar.platformVersion;
-    } on PlatformException {
-      platformVersion = 'Failed to get platform version.';
-    }
-
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
-    if (!mounted) return;
-
-    setState(() {
-      _platformVersion = platformVersion;
-    });
-  }
-
+  
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -47,8 +30,76 @@ class _MyAppState extends State<MyApp> {
         appBar: AppBar(
           title: const Text('Plugin example app'),
         ),
-        body: Center(
-          child: Text('Running on: $_platformVersion\n'),
+        body: Column(
+          children: <Widget>[
+            TextField(
+              decoration: InputDecoration(hintText: "BS - (yyyy-MM-dd)"),
+              onChanged: (value) => this.nepaliDate = value,
+            ),
+            Text(convertedEnglish),
+            RaisedButton(
+              child: Text("Change AD"),
+              onPressed: () {
+                var data = nepaliDate.split("-");
+
+                if (data.length != 3) {
+                  setState(() {
+                    convertedEnglish = "Invalid Date";
+                  });
+                  return;
+                }
+                try {
+                  var nepDate = NepaliDate.fromBS(int.parse(data[0]),
+                      int.parse(data[1]), int.parse(data[2]));
+                  setState(() {
+                    convertedEnglish =
+                        "${nepDate.dateTime.year}-${nepDate.dateTime.month}-${nepDate.dateTime.day}";
+                  });
+                } catch (error) {
+                  print(error);
+                  setState(() {
+                    convertedEnglish = error.message;
+                  });
+                }
+              },
+            ),
+            TextField(
+                decoration: InputDecoration(hintText: "AD - (yyyy-MM-dd)"),
+                onChanged: (value) => this.englishDate = value),
+            Text(convertedNepali),
+            RaisedButton(
+              child: Text("Change BS"),
+              onPressed: () {
+                var data = englishDate.split("-");
+
+                if (data.length != 3) {
+                  setState(() {
+                    convertedNepali = "Invalid Date";
+                  });
+                  return;
+                }
+                try {
+                  var engDate = NepaliDate.fromAD(DateTime(int.parse(data[0]),
+                      int.parse(data[1]), int.parse(data[2])));
+                  setState(() {
+                    convertedNepali =
+                        "${engDate.year}-${engDate.month}-${engDate.day}";
+                  });
+                } catch (error) {
+                  print(error);
+                  setState(() {
+                    convertedNepali = error.message;
+                  });
+                }
+              },
+            ),
+          ],
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            NepaliDate.fromBS(2076, 1, 5);
+            NepaliDate.fromAD(DateTime(2019, 4, 14));
+          },
         ),
       ),
     );
