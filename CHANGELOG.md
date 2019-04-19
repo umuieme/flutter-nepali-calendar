@@ -1,3 +1,4 @@
 ## 0.0.1
 
-* TODO: Describe initial release.
+* basic date converter from AD to BS and vice versa
+* basic nepali date picker
