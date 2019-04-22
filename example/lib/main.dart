@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'dart:async';
 import 'package:nepali_calendar/nepali_date_converter.dart';
 import 'package:nepali_calendar/nepali_date_picker.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_picker/flutter_picker.dart';
 
 void main() => runApp(MyApp());
 
@@ -31,10 +31,8 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  String nepaliDate = "";
-  String convertedEnglish = "";
-  String englishDate = "";
-  String convertedNepali = "";
+  DateTime pickedAdDate;
+  NepaliDate pickedNepaliDate;
 
   @override
   Widget build(BuildContext context) {
@@ -46,89 +44,21 @@ class _MainScreenState extends State<MainScreen> {
         margin: EdgeInsets.all(16),
         child: ListView(
           children: <Widget>[
-            TextField(
-              keyboardType: TextInputType.number,
-              inputFormatters: [DateTextInputFormatter()],
-              decoration: InputDecoration(hintText: "BS - (yyyy-MM-dd)"),
-              onChanged: (value) => this.nepaliDate = value,
-            ),
-            Text(convertedEnglish),
+            Text(pickedAdDate != null
+                ? "${pickedAdDate.year} - ${pickedAdDate.month} - ${pickedAdDate.day} AD \t =>  ${NepaliDate.fromAD(pickedAdDate).toString()} BS"
+                : "Pick a date in AD below"),
             RaisedButton(
-              child: Text("Change AD"),
-              onPressed: () {
-                var data = nepaliDate.split("-");
-
-                if (data.length != 3) {
-                  setState(() {
-                    convertedEnglish = "Invalid Date";
-                  });
-                  return;
-                }
-                try {
-                  var nepDate = NepaliDate.fromBS(int.parse(data[0]),
-                      int.parse(data[1]), int.parse(data[2]));
-                  setState(() {
-                    convertedEnglish =
-                        "${nepDate.dateTime.year}-${nepDate.dateTime.month}-${nepDate.dateTime.day}";
-                  });
-                } catch (error) {
-                  print(error);
-                  setState(() {
-                    convertedEnglish = error.message;
-                  });
-                }
-              },
-            ),
-            TextField(
-                decoration: InputDecoration(hintText: "AD - (yyyy-MM-dd)"),
-                inputFormatters: [DateTextInputFormatter()],
-                keyboardType: TextInputType.number,
-                onChanged: (value) => this.englishDate = value),
-            Text(convertedNepali),
-            RaisedButton(
-              child: Text("Change BS"),
-              onPressed: () {
-                var data = englishDate.split("-");
-
-                if (data.length != 3) {
-                  setState(() {
-                    convertedNepali = "Invalid Date";
-                  });
-                  return;
-                }
-                try {
-                  var engDate = NepaliDate.fromAD(DateTime(int.parse(data[0]),
-                      int.parse(data[1]), int.parse(data[2])));
-                  setState(() {
-                    convertedNepali =
-                        "${engDate.year}-${engDate.month}-${engDate.day}";
-                  });
-                } catch (error) {
-                  print(error);
-                  setState(() {
-                    convertedNepali = error.message;
-                  });
-                }
-              },
-            ),
+                child: Text("Change to BS"),
+                onPressed: this._onChangeToBsPressed),
             SizedBox(
-              height: 20,
+              height: 10,
             ),
-            Text(pickedDate != null
-                ? "${pickedDate.toString()} => ${pickedDate.dateTime.year}-${pickedDate.dateTime.month}-${pickedDate.dateTime.day}"
-                : "Pick a date"),
+            Text(pickedNepaliDate != null
+                ? "${pickedNepaliDate.toString()} BS => ${pickedNepaliDate.dateTime.year} - ${pickedNepaliDate.dateTime.month} - ${pickedNepaliDate.dateTime.day} AD"
+                : "Pick a date in BS below"),
             RaisedButton(
-              child: Text("PickDate"),
-              onPressed: () {
-                NepaliDatePicker(context, currentDate: pickedDate,
-                    onSelected: (nepalidate) {
-                  print(nepalidate.toString());
-                  print(nepalidate.dateTime);
-                  setState(() {
-                    pickedDate = nepalidate;
-                  });
-                }).showDatePicker();
-              },
+              child: Text("Change to AD"),
+              onPressed: this._onChangeToAdPressed,
             )
           ],
         ),
@@ -136,7 +66,24 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 
-  NepaliDate pickedDate;
+  _onChangeToBsPressed() {
+    Picker(
+        adapter: DateTimePickerAdapter(value: pickedAdDate),
+        onConfirm: (picker, selecteds) {
+          setState(() {
+            pickedAdDate = (picker.adapter as DateTimePickerAdapter).value;
+          });
+        }).showModal(context);
+  }
+
+  _onChangeToAdPressed(){
+     NepaliDatePicker(context, currentDate: pickedNepaliDate,
+                    onSelected: (nepalidate) {
+                  setState(() {
+                    pickedNepaliDate = nepalidate;
+                  });
+                }).showDatePicker();
+  }
 }
 
 class DateTextInputFormatter extends TextInputFormatter {

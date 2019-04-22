@@ -1,4 +1,3 @@
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_picker/flutter_picker.dart';
@@ -10,7 +9,7 @@ class NepaliDatePicker {
   final Function(NepaliDate) onSelected;
   final String title;
   NepaliDatePicker(this.context, {this.currentDate, this.onSelected, this.title}) {
-    currentDate = NepaliDate.fromAD(DateTime.now());
+    currentDate = currentDate ??  NepaliDate.fromAD();
   }
 
   _indexOfYear(){
@@ -24,7 +23,6 @@ class NepaliDatePicker {
         title: Text(title ?? "Select NepaliDate"),
         selecteds: currentDate == null ? null : [_indexOfYear(), currentDate.month-1, currentDate.day-1],
         onConfirm: (Picker picker, List value) {
-          print(picker.getSelectedValues());
           if (onSelected == null) return;
           var selectedValues = picker.getSelectedValues();
           onSelected(NepaliDate.fromBS(
