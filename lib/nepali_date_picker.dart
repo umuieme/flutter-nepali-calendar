@@ -3,6 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_picker/flutter_picker.dart';
 import 'package:nepali_calendar/nepali_date_converter.dart';
 
+/// NepaliDatePicker 
+/// 
+/// Create a DatePicker for BS date in modal. This uses [flutter_picker] as picker 
+/// [currentDate] Initial Date to show for picker. Default is today date.
+/// [onSelected(date)] callback for the date selection with the selected [NepaliDate]
+/// [title] to show in the DatePicker
 class NepaliDatePicker {
   final BuildContext context;
   NepaliDate currentDate;
@@ -16,6 +22,9 @@ class NepaliDatePicker {
     return bsYears.indexWhere((value)=> value.containsKey(currentDate.year));
   }
 
+/// function to show this DatePicker. 
+/// 
+/// Currently shows in modal only
   showDatePicker() {
     Picker(
         adapter: PickerDataAdapter<int>(pickerdata: bsYears),
