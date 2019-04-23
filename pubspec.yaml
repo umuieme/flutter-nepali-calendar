@@ -1,6 +1,6 @@
 name: nepali_calendar
 description: A plugin to convert AD to BS and vice versa. There is also Nepali Date Picker.
-version: 0.0.1
+version: 0.0.2
 author: Umesh Basnet <basnet0umesh@gmail.com>
 homepage: https://github.com/umuieme/flutter-nepali-calendar
 
