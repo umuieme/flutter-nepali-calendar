@@ -151,9 +151,7 @@ class NepaliDate {
   int year;
   int month;
   int day;
-  NepaliDate._internal() {
-    print(dateTime);
-  }
+  NepaliDate._internal();
 
 // throws invalid range error if provided date cannot be converted
   factory NepaliDate.fromBS(int year, int month, int day) {
@@ -166,9 +164,10 @@ class NepaliDate {
     return nepDate;
   }
 
-  factory NepaliDate.fromAD(DateTime dateTime) {
+  factory NepaliDate.fromAD([DateTime dateTime]) {
     var nepDate = NepaliDate._internal();
-    nepDate.dateTime = DateTime(dateTime.year, dateTime.month, dateTime.day);
+    nepDate.dateTime = dateTime??DateTime.now();
+    nepDate.dateTime = DateTime(nepDate.dateTime.year, nepDate.dateTime.month, nepDate.dateTime.day);
     nepDate._validateAD();
     nepDate._toBS();
     return nepDate;
@@ -185,10 +184,6 @@ class NepaliDate {
     // var difference = (duration.inSeconds / (60 * 60 *24)).toInt();
     var totalDays =
         (duration.inSeconds / (60 * 60 * 24)).ceilToDouble().toInt();
-
-    print("totalDays ==== $totalDays");
-    print("totalDays ==== ${duration.inSeconds / (60 * 60 * 24)}");
-    print(duration.inDays);
     year = _config['bs_start'];
     month = 0;
     day = 0;
