@@ -76,13 +76,13 @@ class _MainScreenState extends State<MainScreen> {
         }).showModal(context);
   }
 
-  _onChangeToAdPressed(){
-     NepaliDatePicker(context, currentDate: pickedNepaliDate,
-                    onSelected: (nepalidate) {
-                  setState(() {
-                    pickedNepaliDate = nepalidate;
-                  });
-                }).showDatePicker();
+  _onChangeToAdPressed() {
+    NepaliDatePicker(context, currentDate: pickedNepaliDate,
+        onSelected: (nepalidate) {
+      setState(() {
+        pickedNepaliDate = nepalidate;
+      });
+    }).showDatePicker();
   }
 }
 
