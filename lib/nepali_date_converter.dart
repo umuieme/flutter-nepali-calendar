@@ -1,7 +1,7 @@
 import 'dart:core';
 
 /// convert the [_bsYears] to the format supported by the Picker.
-/// 
+///
 /// eaxmple
 ///     [ {
 ///       1975: [
@@ -10,7 +10,7 @@ import 'dart:core';
 ///         ...
 ///         ]
 ///     },
-///     { 
+///     {
 ///       1976: [
 ///         {1: [1,2,3, ... ,31]},
 ///         {2: [1,2,3,...32]},
@@ -18,19 +18,20 @@ import 'dart:core';
 ///         ]
 ///     },
 /// ]
-List<dynamic> bsYears = Map<int, List<int>>.from(_bsYears).map((key, value)=>
-    MapEntry(key, { key: _getMonths(value)})).values.toList();
+List<dynamic> bsYears = Map<int, List<int>>.from(_bsYears)
+    .map((key, value) => MapEntry(key, {key: _getMonths(value)}))
+    .values
+    .toList();
 
-
-/// get the months for picker 
-List<dynamic> _getMonths(List<int> months){
+/// get the months for picker
+List<dynamic> _getMonths(List<int> months) {
   int index = 0;
-  return months.map((month)=> {
-    ++index : _getDays(month)
-  }).toList();
+  return months.map((month) => {++index: _getDays(month)}).toList();
 }
-/// get the days for picker 
-List<int> _getDays(int numOfDays)=> List.generate(numOfDays, (index)=> index+1);
+
+/// get the days for picker
+List<int> _getDays(int numOfDays) =>
+    List.generate(numOfDays, (index) => index + 1);
 
 /// Mapping of  month and date in corresponding year.
 /// The conversion is done according to this data.
@@ -166,27 +167,30 @@ var _config = {
   'bs_end': 2095,
   'ad_end': 2038,
 };
+
 /// An instance of nepali date
-/// 
+///
 /// This contains both date in AD and BS.
 class NepaliDate {
   /// DateTime in AD for the BS date
   DateTime dateTime;
 
-/// year in BS
+  /// year in BS
   int year;
+
   /// month in BS
   int month;
+
   /// day of month in BS
   int day;
 
   NepaliDate._internal();
 
-/// Constructor for the date from BS
-/// 
-/// [year] the BS year 
-/// [month] the BS month starting from 1-12
-/// [day] the day in month in BS starting from 1
+  /// Constructor for the date from BS
+  ///
+  /// [year] the BS year
+  /// [month] the BS month starting from 1-12
+  /// [day] the day in month in BS starting from 1
 // throws invalid range error if provided date cannot be converted
   factory NepaliDate.fromBS(int year, int month, int day) {
     var nepDate = NepaliDate._internal();
@@ -198,13 +202,14 @@ class NepaliDate {
     return nepDate;
   }
 
-/// Constructor to create instance from AD
-/// 
-/// [DateTime datetime] converts given date time to BS. default [DateTime.now()]
+  /// Constructor to create instance from AD
+  ///
+  /// [DateTime datetime] converts given date time to BS. default [DateTime.now()]
   factory NepaliDate.fromAD([DateTime dateTime]) {
     var nepDate = NepaliDate._internal();
-    nepDate.dateTime = dateTime??DateTime.now();
-    nepDate.dateTime = DateTime(nepDate.dateTime.year, nepDate.dateTime.month, nepDate.dateTime.day);
+    nepDate.dateTime = dateTime ?? DateTime.now();
+    nepDate.dateTime = DateTime(
+        nepDate.dateTime.year, nepDate.dateTime.month, nepDate.dateTime.day);
     nepDate._validateAD();
     nepDate._toBS();
     return nepDate;
@@ -240,7 +245,7 @@ class NepaliDate {
     }
   }
 
-/// Converts BS to AD and set it in [dateTime]
+  /// Converts BS to AD and set it in [dateTime]
   _toAD() {
     var dayCount = 0;
     int i;
@@ -255,14 +260,14 @@ class NepaliDate {
     dateTime = _getStartDate().add(Duration(days: dayCount));
   }
 
-/// get first AD date supported from [_config]
+  /// get first AD date supported from [_config]
   DateTime _getStartDate() {
     var firstAdDay = _config['ad_firstDay'].toString().split("-");
     return DateTime(int.parse(firstAdDay[0]), int.parse(firstAdDay[1]),
         int.parse(firstAdDay[2]));
   }
 
-/// validates the given BS date fall with in the range supported
+  /// validates the given BS date fall with in the range supported
   _validateBS() {
     if (!_bsYears.containsKey(year)) {
       throw RangeError.range(year, _config['bs_start'], _config['bs_end'],
@@ -278,7 +283,7 @@ class NepaliDate {
     }
   }
 
-/// validates the given AD falls with in the range supported
+  /// validates the given AD falls with in the range supported
   _validateAD() {
     if (dateTime.compareTo(_getStartDate()) < 0 ||
         dateTime.year > _config['ad_end']) {

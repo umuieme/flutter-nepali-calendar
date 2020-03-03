@@ -1,11 +1,11 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_picker/flutter_picker.dart';
+import 'package:nepali_calendar/CustomPickerAdapter.dart';
 import 'package:nepali_calendar/nepali_date_converter.dart';
 
-/// NepaliDatePicker 
-/// 
-/// Create a DatePicker for BS date in modal. This uses [flutter_picker] as picker 
+/// NepaliDatePicker
+///
+/// Create a DatePicker for BS date in modal. This uses [flutter_picker] as picker
 /// [currentDate] Initial Date to show for picker. Default is today date.
 /// [onSelected(date)] callback for the date selection with the selected [NepaliDate]
 /// [title] to show in the DatePicker
@@ -14,23 +14,34 @@ class NepaliDatePicker {
   NepaliDate currentDate;
   final Function(NepaliDate) onSelected;
   final String title;
-  NepaliDatePicker(this.context, {this.currentDate, this.onSelected, this.title}) {
-    currentDate = currentDate ??  NepaliDate.fromAD();
+  
+  /// A function to build custom picker item
+  ///
+  /// [text] A text to show in the picker
+  /// [isSelected] bool value to denote if the item is selected.
+  final Function(String text, bool isSelected) buildItem;
+
+  NepaliDatePicker(this.context,
+      {this.currentDate, this.onSelected, this.title, this.buildItem}) {
+    currentDate = currentDate ?? NepaliDate.fromAD();
   }
 
-  _indexOfYear(){
-    return bsYears.indexWhere((value)=> value.containsKey(currentDate.year));
+  _indexOfYear() {
+    return bsYears.indexWhere((value) => value.containsKey(currentDate.year));
   }
 
-/// function to show this DatePicker. 
-/// 
-/// Currently shows in modal only
+  /// function to show this DatePicker.
+  ///
+  /// Currently shows in modal only
   showDatePicker() {
     Picker(
-        adapter: PickerDataAdapter<int>(pickerdata: bsYears),
+        adapter: CustomPickerAdapter<int>(
+            pickerdata: bsYears, buildItemWidget: buildItem),
         hideHeader: false,
         title: Text(title ?? "Select NepaliDate"),
-        selecteds: currentDate == null ? null : [_indexOfYear(), currentDate.month-1, currentDate.day-1],
+        selecteds: currentDate == null
+            ? null
+            : [_indexOfYear(), currentDate.month - 1, currentDate.day - 1],
         onConfirm: (Picker picker, List value) {
           if (onSelected == null) return;
           var selectedValues = picker.getSelectedValues();

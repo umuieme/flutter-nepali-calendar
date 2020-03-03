@@ -78,7 +78,9 @@ class _MainScreenState extends State<MainScreen> {
 
   _onChangeToAdPressed() {
     NepaliDatePicker(context, currentDate: pickedNepaliDate,
-        onSelected: (nepalidate) {
+        buildItem: (text, isSelected) {
+      return Text("$text");
+    }, onSelected: (nepalidate) {
       setState(() {
         pickedNepaliDate = nepalidate;
       });
